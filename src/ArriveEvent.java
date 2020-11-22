@@ -1,38 +1,23 @@
 import java.util.List;
+import java.util.Optional;
 
 public class ArriveEvent extends Event{
 
 
     public ArriveEvent(Customer customer) {
         super(customer.getArrivalTime(), customer, x -> {
-            x.getServers().stream().map(y->{
-                if(y.isAvailable() == true){
-                    return new ServeEvent(customer);
-                }else{
-                    
-                }
-            });
+            if(!x.getServers().stream().findFirst().filter(y->y.isAvailable()).equals(Optional.empty())){
+                return Pair.of(x,new ServeEvent(customer,x.getServers(),x.getServers().stream().findFirst().filter(y->y.isAvailable()).get()));
+            }
+            if(!x.getServers().stream().findFirst().filter(y->y.isHasWaitingCustomer()).equals(Optional.empty())){
+                return Pair.of(x,new WaitEvent(customer,x.getServers(),x.getServers().stream().findFirst().filter(y->y.isHasWaitingCustomer()).get()));
+            }
 
+            return Pair.of(x,new LeaveEvent(customer,x.getServers()));
         });
     }
     @Override
     public String toString() {
         return String.format("%.3f", this.getTime()) +" " + this.getCustomer().getCustomerID() + " arrives";
-    }
-
-    @Override
-    public Event execute() {
-        for(Server server:getServers()){
-            if(server.isAvailable()==true){
-                return new ServeEvent(this.getCustomer(),this.getServers(),server);
-            }
-        }
-
-        for(Server server:getServers()){
-            if(server.isHasWaitingCustomer()==false){
-                return new WaitEvent(getCustomer(),getServers(),server);
-            }
-        }
-        return new LeaveEvent(getCustomer(),getServers());
     }
 }
