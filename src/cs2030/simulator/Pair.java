@@ -1,3 +1,4 @@
+package cs2030.simulator;
 public class Pair <T,U> {
     private final T first;
     private final U second;

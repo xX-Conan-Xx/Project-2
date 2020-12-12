@@ -1,7 +1,8 @@
+package cs2030.simulator;
 import java.util.List;
 
 public class LeaveEvent extends Event{
-    public LeaveEvent(Customer customer, List<Server> servers) {
+    public LeaveEvent(Customer customer) {
         super(customer.getArrivalTime(), customer, x->Pair.of(x,null));
     }
 
